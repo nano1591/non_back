@@ -1,6 +1,7 @@
 import type { Dialect } from 'sequelize'
 import { Sequelize } from 'sequelize'
 import CONFIG from '@/config'
+import Logger from '../log'
 
 const DATABASE = CONFIG.DATABASE
 
@@ -18,7 +19,7 @@ export class SequelizeClient {
           host: DATABASE.HOST,
           port: DATABASE.PORT,
           timezone: DATABASE.TIMEZONE,
-          logging: false
+          logging: Logger.query
         }
       )
     }

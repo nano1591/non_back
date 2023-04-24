@@ -56,45 +56,45 @@ export const sureSkip = async (curUserId: number, friId: number): Promise<unknow
   return await ship.save()
 }
 
-type SkipItem = Pick<User, 'username'> & Pick<FriendShip, 'status' | 'createdAt' | 'updatedAt'>
-
-type SkipInfo = {
-  toMe: SkipItem[]
-  send: SkipItem[]
-}
+type SkipItem = Pick<User, 'username'> & Pick<FriendShip, 'createdAt' | 'updatedAt'>
 
 /** 用户收到的和发出的好友申请信息 */
-export const getSkipInfo = async (user: User): Promise<SkipInfo> => {
+export const getSkipInfo = async (user: User): Promise<SkipItem[]> => {
   const mapSkipList = (list: User[]): SkipItem[] => list.map(user => ({
     username: user.username,
-    status: user.FriendShip.status,
     createdAt: user.FriendShip.createdAt,
     updatedAt: user.FriendShip.updatedAt
   }))
   const compareFn = (a: SkipItem, b: SkipItem): number => new Date(a.updatedAt) < new Date(b.updatedAt) ? 1 : -1
-  return {
-    toMe: mapSkipList(await user.getSkipToMe()).sort(compareFn),
-    send: mapSkipList(await user.getSkipSend()).sort(compareFn)
-  }
+  return mapSkipList((await user.getSkipToMe()).filter(user => user.FriendShip.status === "sure")).sort(compareFn)
 }
 
-type FriendInfo = Pick<User, 'username' | 'isLogin'>
+export type FriendInfo = Pick<User, 'username' | 'socketId'>
 
 export const getFriendList = async (user: User): Promise<FriendInfo[]> => {
   const mapFriendList = (list: User[]): FriendInfo[] => list.map(user => ({
     username: user.username,
-    isLogin: user.isLogin
+    socketId: user.socketId
   }))
   const friendList = [
     mapFriendList((await user.getSkipToMe()).filter(user => user.FriendShip.status === "sure")),
     mapFriendList((await user.getSkipSend()).filter(user => user.FriendShip.status === "sure"))
   ].flat()
   const compareFn = (a: FriendInfo, b: FriendInfo): number => {
-    if (a.isLogin && b.isLogin) return a.username.toUpperCase() < b.username.toUpperCase() ? -1 : 1
-    else if (a.isLogin) return -1
+    if (a.socketId && b.socketId) return a.username.toUpperCase() < b.username.toUpperCase() ? -1 : 1
+    else if (a.socketId) return -1
     else return 1
   }
   return friendList.sort(compareFn)
+}
+
+export const getLoginedFriendSocketIdList = async (user: User): Promise<string[]> => {
+  const mapFriendList = (list: User[]): string[] => list.map(user => user.socketId)
+  const friendList = [
+    mapFriendList((await user.getSkipToMe()).filter(user => user.FriendShip.status === "sure" && user.socketId)),
+    mapFriendList((await user.getSkipSend()).filter(user => user.FriendShip.status === "sure" && user.socketId))
+  ].flat()
+  return friendList.sort()
 }
 
 export const deleteFriend = async (curUserId: number, friId: number): Promise<unknown> => {

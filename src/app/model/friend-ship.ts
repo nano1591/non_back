@@ -2,16 +2,19 @@ import { DataTypes } from 'sequelize'
 import { User } from './user'
 import { BaseModel, baseOptions } from './base'
 
+/** 
+ * 添加好友的状态
+ *  1.ask： 询问中
+ *  2.reject： 拒绝
+ *  3.sure：同意
+ */
+export type FriendShipStatus = "ask" | "reject" | "sure"
+
 export class FriendShip extends BaseModel {
   declare uid: number
   declare fid: number
-  /** 
-   * 添加好友的状态
-   *  1.ask： 询问中
-   *  2.reject： 拒绝
-   *  3.sure：同意
-   */
-  declare status: "ask" | "reject" | "sure"
+
+  declare status: FriendShipStatus
 }
 
 export type IFriendShip = Pick<FriendShip, "uid" | "fid" | "status">

@@ -32,16 +32,14 @@ router.post("/login", async (ctx: Context) => {
   if (error) return global.PROCESS.parameterException(error.message)
   const user = await getOneUserByAccount(value.account)
   if (user.password !== value.password) global.PROCESS.notFoundException(10410)
-  if (user.isLogin) global.PROCESS.forbiddenException(10411)
-  user.isLogin = true
-  await user.save()
+  if (user.socketId) global.PROCESS.forbiddenException(10411)
   global.PROCESS.success({ token: generateToken(user.id) })
 })
 
 router.get("/logout", async (ctx: Context) => {
   const user = await getOneUserById(ctx.state.user.id)
-  if (!user.isLogin) global.PROCESS.forbiddenException(10412)
-  user.isLogin = false
+  if (!user.socketId) global.PROCESS.forbiddenException(10412)
+  user.socketId = ""
   await user.save()
   global.PROCESS.success()
 })
