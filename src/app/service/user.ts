@@ -17,6 +17,15 @@ export const createOneUser = async (newOne: IUser): Promise<User> => {
   return await User.create(newOne)
 }
 
+export const saveUserSocketId = async (uid: number, socketId: string) => {
+  const user = await User.findByPk(uid)
+  if (!user) {
+    return global.PROCESS.notFoundException(10410)
+  }
+  user.socketId = socketId
+  await user.save()
+}
+
 export const updateOneUser = async (newOne: User): Promise<User> => {
   const one = await User.findByPk(newOne.id)
   if (!one) {

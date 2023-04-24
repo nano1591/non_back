@@ -6,9 +6,7 @@ export class User extends BaseModel {
   declare account: string
   declare username: string
   declare password: string
-  declare loginDate: Date | null
-  declare logOutDate: Date | null
-  declare isLogin: boolean
+  declare socketId: string
   /** 用户收到的好友申请 */
   declare getSkipToMe: () => Promise<User[]>
   /** 用户发出的好友申请 */
@@ -36,17 +34,7 @@ User.init(
       type: DataTypes.TEXT,
       allowNull: true,
     },
-    loginDate: DataTypes.DATE,
-    logOutDate: DataTypes.DATE,
-    isLogin: {
-      type: DataTypes.BOOLEAN,
-      allowNull: false,
-      defaultValue: false,
-      set(value: boolean) {
-        this.setDataValue(value ? 'loginDate' : "logOutDate", new Date)
-        this.setDataValue("isLogin", value)
-      }
-    }
+    socketId: DataTypes.TEXT
   },
   {
     tableName: 'users',

@@ -14,6 +14,6 @@ export default async (ctx: Context, next: Function) => {
   }
 }
 
-export function generateToken(id: number) {
-  return jwt.sign({ id }, CONFIG.JWT.JWT_SECRET, { expiresIn: CONFIG.JWT.EXPIRES_IN })
-}
+export const generateToken = (id: number) => jwt.sign({ id }, CONFIG.JWT.JWT_SECRET, { expiresIn: CONFIG.JWT.EXPIRES_IN })
+
+export const verifyToken = (token: string) => jwt.verify(token, CONFIG.JWT.JWT_SECRET)

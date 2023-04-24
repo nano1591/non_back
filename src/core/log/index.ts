@@ -18,14 +18,6 @@ const formatText = {
   request: async function (ctx: any) {
     let logText = ''
     logText += `\n==================== REQUEST BEGIN ====================`
-    try {
-      const user = await curUser(ctx)
-      logText += `\n[USER]\n${JSON.stringify({
-        id: user.id,
-        account: user.account,
-        username: user.username
-      }, null, 2)}`
-    } catch(e) {}
     logText += `\n[REQUEST]`
     logText += `\n${JSON.stringify(ctx.request, null, 2)}`
     logText += `\n[REQUEST QUERY STRING]\n${JSON.stringify(ctx.request.queryString, null, 2)}`
@@ -36,10 +28,17 @@ const formatText = {
   },
 
   // response log
-  response: function (ctx: any) {
+  response: async function (ctx: any) {
     let logText = ''
-    logText += `\n[RESPONSE]`
-    logText += `\n${JSON.stringify(ctx.response.body, null, 2)}`
+    try {
+      const user = await curUser(ctx)
+      logText += `[USER]\n${JSON.stringify({
+        id: user.id,
+        account: user.account,
+        username: user.username
+      }, null, 2)}`
+    } catch(e) {}
+    logText += `\n[RESPONSE BODY]\n${JSON.stringify(ctx.response.body, null, 2)}`
     logText += `\n==================== RESPONSE END ====================\n`
     if (ENV === 'development') console.log(logText)
     return logText
