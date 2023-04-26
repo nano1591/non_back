@@ -4,6 +4,7 @@ import Router from "koa-router"
 import { createOneUser, getOneUserById, getOneUserByAccount } from "../service/user"
 import { IUser } from "../model"
 import { generateToken } from "@/core/auth"
+import { dissolveRoom } from "../service/room"
 
 const router = new Router({
   prefix: "/user"
@@ -41,6 +42,7 @@ router.get("/logout", async (ctx: Context) => {
   if (!user.socketId) global.PROCESS.forbiddenException(10412)
   user.socketId = ""
   await user.save()
+  await dissolveRoom(user.id)
   global.PROCESS.success()
 })
 

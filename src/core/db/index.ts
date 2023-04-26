@@ -19,7 +19,7 @@ export class SequelizeClient {
           host: DATABASE.HOST,
           port: DATABASE.PORT,
           timezone: DATABASE.TIMEZONE,
-          logging: Logger.query
+          logging: false
         }
       )
     }

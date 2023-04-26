@@ -23,6 +23,9 @@ const CONFIG = {
     PASSWORD: 'postgrespw',
     TIMEZONE: '+08:00',
   },
+  ROOM: {
+    MAX_ITEM_SIZE: 3
+  }
 }
 
 export default CONFIG

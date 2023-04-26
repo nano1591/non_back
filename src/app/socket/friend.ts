@@ -1,29 +1,19 @@
 import { deleteFriend, getLoginedFriendSocketIdList, rejectSkip, requestShip, sureSkip } from "../service/friend"
 import { getOneUserById, getOneUserByUsername } from "../service/user"
-import type { IO, Socket } from "."
+import type { Listener } from "."
 
-/** friend:login */
-export const notifyLoginedFriendsMeLogin = async (io: IO, socket: Socket) => {
+export const changeMyStatusAndnotifyLoginedFriend: Listener = async (io, socket, { status }) => {
   const me = await getOneUserById(socket.data.uid!)
+  me.status = status
+  await me.save()
   const loginedFriendSocketIdList = await getLoginedFriendSocketIdList(me)
   if (!loginedFriendSocketIdList.length) return
   const sockets = await io.in(loginedFriendSocketIdList).fetchSockets()
-  // 通知好友，我已上线。（传自己的信息）
-  sockets.forEach(_socket => _socket.emit("friend:login", { username: me.username, socketId: socket.id }))
-}
-
-/** friend:logout */
-export const notifyLoginedFriendsMeLogout = async (io: IO, socket: Socket) => {
-  const me = await getOneUserById(socket.data.uid!)
-  const loginedFriendSocketIdList = await getLoginedFriendSocketIdList(me)
-  if (!loginedFriendSocketIdList.length) return
-  const sockets = await io.in(loginedFriendSocketIdList).fetchSockets()
-  // 通知好友，我已上线。（传自己的信息）
-  sockets.forEach(_socket => _socket.emit("friend:logout", { fName: me.username }))
+  sockets.forEach(_socket => _socket.emit("friend:notify", { id: me.id, username: me.username, status }))
 }
 
 /** friend:ask */
-export const askFriendShip = async (io: IO, socket: Socket, data: any) => {
+export const askFriendShip: Listener = async (io, socket, data) => {
   const me = await getOneUserById(socket.data.uid!)
   const friend = await getOneUserByUsername(data.fName)
   await requestShip(me.id, friend.id)
@@ -34,29 +24,24 @@ export const askFriendShip = async (io: IO, socket: Socket, data: any) => {
 }
 
 /** friend:sure */
-export const agreeFriendShip = async (io: IO, socket: Socket, data: any) => {
+export const agreeFriendShip: Listener = async (io, socket, data) => {
   const me = await getOneUserById(socket.data.uid!)
   const friend = await getOneUserByUsername(data.fName)
   await sureSkip(me.id, friend.id)
   if (friend.socketId) {
-    // 通知对方，我已经同意好友申请。（发送自己的信息）
-    io.in(friend.socketId).emit("friend:sure", { username: me.username, socketId: me.socketId })
+    io.in(friend.socketId).emit("friend:notify", { id: me.id, username: me.username, status: me.status })
   }
 }
 
 /** friend:reject */
-export const rejectFriendShip = async (io: IO, socket: Socket, data: any) => {
+export const rejectFriendShip: Listener = async (io, socket, data) => {
   const me = await getOneUserById(socket.data.uid!)
   const friend = await getOneUserByUsername(data.fName)
   await rejectSkip(me.id, friend.id)
-  // if (friend.socketId) {
-  //   // 通知对方，我拒绝了好友申请。（传自己的信息）
-  //   io.in(friend.socketId).emit("friend:reject", { fName: me.username })
-  // }
 }
 
 /** friend:delete */
-export const deleteFriendShip = async (io: IO, socket: Socket, data: any) => {
+export const deleteFriendShip: Listener = async (io, socket, data) => {
   const me = await getOneUserById(socket.data.uid!)
   const friend = await getOneUserByUsername(data.fName)
   await deleteFriend(me.id, friend.id)
