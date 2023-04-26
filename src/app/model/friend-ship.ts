@@ -22,11 +22,12 @@ export type IFriendShip = Pick<FriendShip, "uid" | "fid" | "status">
 FriendShip.init(
   {
     status: DataTypes.TEXT
-  }, {
-  ...baseOptions,
-  tableName: 'friend-ship',
-  paranoid: false
-}
+  },
+  {
+    ...baseOptions,
+    tableName: 'friend-ship',
+    paranoid: false
+  }
 )
 
 User.belongsToMany(User, { as: "skipSend", through: FriendShip, foreignKey: "uid" })

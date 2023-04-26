@@ -14,3 +14,5 @@ export default async () => {
 
 export * from './user'
 export * from './friend-ship'
+export * from './room'
+export * from './room-item'
