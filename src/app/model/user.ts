@@ -11,6 +11,7 @@ export class User extends BaseModel {
   declare password: string
   declare status: UserStatus
   declare socketId: string | null
+  declare icon: number
 
   /** 用户收到的好友申请 */
   declare getSkipToMe: () => Promise<User[]>
@@ -33,7 +34,7 @@ export class User extends BaseModel {
 }
 
 export type IUser = Pick<User, "account" | "username" | "password">
-export type UserInfo = Pick<User, 'id' | 'username' | 'status'>
+export type UserInfo = Pick<User, 'id' | 'username' | 'status' | 'icon'>
 
 User.init(
   {
@@ -54,6 +55,10 @@ User.init(
       type: DataTypes.TEXT,
       defaultValue: "outline",
       allowNull: false
+    },
+    icon: {
+      type: DataTypes.INTEGER,
+      defaultValue: 1
     }
   },
   {

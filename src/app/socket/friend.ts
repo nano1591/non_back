@@ -9,7 +9,7 @@ export const changeMyStatusAndnotifyLoginedFriend: Listener = async (io, socket,
   const loginedFriendSocketIdList = await getLoginedFriendSocketIdList(me)
   if (!loginedFriendSocketIdList.length) return
   const sockets = await io.in(loginedFriendSocketIdList).fetchSockets()
-  sockets.forEach(_socket => _socket.emit("friend:notify", { id: me.id, username: me.username, status }))
+  sockets.forEach(_socket => _socket.emit("friend:notify", { id: me.id, username: me.username, status, icon: me.icon }))
 }
 
 /** friend:ask */
@@ -29,7 +29,7 @@ export const agreeFriendShip: Listener = async (io, socket, data) => {
   const friend = await getOneUserByUsername(data.fName)
   await sureSkip(me.id, friend.id)
   if (friend.socketId) {
-    io.in(friend.socketId).emit("friend:notify", { id: me.id, username: me.username, status: me.status })
+    io.in(friend.socketId).emit("friend:notify", { id: me.id, username: me.username, status: me.status, icon: me.icon })
   }
 }
 

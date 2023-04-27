@@ -73,7 +73,8 @@ export const getFriendList = async (user: User): Promise<UserInfo[]> => {
   const mapFriendList = (list: User[]): UserInfo[] => list.map(user => ({
     id: user.id,
     username: user.username,
-    status: user.status
+    status: user.status,
+    icon: user.icon
   }))
   const friendList = [
     mapFriendList((await user.getSkipToMe()).filter(user => user.FriendShip!.status === "sure")),
