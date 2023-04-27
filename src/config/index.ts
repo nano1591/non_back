@@ -25,6 +25,9 @@ const CONFIG = {
   },
   ROOM: {
     MAX_ITEM_SIZE: 3
+  },
+  CLIENT: {
+    VERSION: "1.0.0"
   }
 }
 
