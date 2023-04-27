@@ -45,6 +45,7 @@ export const getRoomUsersByMasterId = async (masterId: number): Promise<UserInRo
   return roomUsers.map(user => ({
     id: user.id,
     username: user.username,
+    icon: user.icon,
     itemId: user.RoomItem!.itemId,
     index: user.RoomItem!.index
   }))
@@ -57,6 +58,7 @@ export const getRoomUsersByPK = async (id: number): Promise<UserInRoom[]> => {
   return roomUsers.map(user => ({
     id: user.id,
     username: user.username,
+    icon: user.icon,
     itemId: user.RoomItem!.itemId,
     index: user.RoomItem!.index
   }))

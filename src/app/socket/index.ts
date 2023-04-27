@@ -6,6 +6,7 @@ import { agreeFriendShip, askFriendShip, deleteFriendShip, changeMyStatusAndnoti
 import Logger from "@/core/log"
 import { agreeGameRoom, askGameRoom, changeItem, createGameRoom, dissolveGameRoom, joinGameRoom, kickoutGameRoom, quitGameRoom, reMaster, reName, rejectGameRoom } from "./room"
 import { ItemId, RoomInfo, UserInRoom, UserInfo } from "../model"
+import { changeMyIcon } from "./user"
 
 // 【消息接收对象|领域】:消息类型
 
@@ -45,6 +46,8 @@ export type ServerToClientEvents = {
 }
 
 export interface ClientToServerEvents {
+  /** 更换图标 */
+  "me:icon": (data: { icon: number }) => void
   /** 给别人发送好友申请 */
   "friend:ask": (data: { fName: string }) => void
   /** 同意别人的好友申请 */
@@ -105,6 +108,8 @@ export const initSocket = (httpServer: HttpServer) => {
     const listener = listenerWrap(io, socket)
     listener(changeMyStatusAndnotifyLoginedFriend)({ status: "online" })
     socket.on("disconnect", () => listener(changeMyStatusAndnotifyLoginedFriend)({ status: "outline" }))
+    socket.on("me:icon", listener(changeMyIcon))
+
     socket.on("friend:ask", listener(askFriendShip))
     socket.on("friend:sure", listener(agreeFriendShip))
     socket.on("friend:reject", listener(rejectFriendShip))
