@@ -12,7 +12,7 @@ const CONFIG = {
   BASE_URL: 'http://10.0.95.220',
   JWT: {
     JWT_SECRET: 'nano',
-    EXPIRES_IN: '30d',
+    EXPIRES_IN: '30d'
   },
   DATABASE: {
     DIALECT: 'postgres',
@@ -21,13 +21,13 @@ const CONFIG = {
     PORT: 32768,
     USER: 'postgres',
     PASSWORD: 'postgrespw',
-    TIMEZONE: '+08:00',
+    TIMEZONE: '+08:00'
   },
   ROOM: {
     MAX_ITEM_SIZE: 3
   },
   CLIENT: {
-    VERSION: "1.0.0"
+    VERSION: '1.0.0'
   }
 }
 

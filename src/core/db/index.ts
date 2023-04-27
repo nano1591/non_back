@@ -1,7 +1,6 @@
 import type { Dialect } from 'sequelize'
 import { Sequelize } from 'sequelize'
 import CONFIG from '@/config'
-import Logger from '../log'
 
 const DATABASE = CONFIG.DATABASE
 

@@ -7,7 +7,7 @@ export default async () => {
     await SequelizeClient.INSTANCE.sync({ alter: true })
   } catch (e) {
     SequelizeClient.INSTANCE.close()
-    Logger.error("数据库连接失败", e)
+    Logger.error('数据库连接失败', e)
     throw Error()
   }
 }

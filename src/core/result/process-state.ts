@@ -2,7 +2,7 @@
  * 处理结果
  * 子类包括Exception和Success
  */
-export class ProcessState { }
+export class ProcessState {}
 
 /**
  * 处理结果：成功
@@ -16,7 +16,7 @@ export class Success extends ProcessState {
 }
 
 /**
- * Exception基类 
+ * Exception基类
  */
 export class Exception extends ProcessState {
   code: number | string

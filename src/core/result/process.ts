@@ -16,7 +16,7 @@ export class Process {
    * @param code errorCode
    * @param message errorCode message
    */
-  success(data: any | undefined = undefined) {
+  success(data: any | undefined = undefined): unknown {
     throw new Success(data)
   }
 

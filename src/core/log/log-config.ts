@@ -24,7 +24,7 @@ export default {
       encoding: 'utf-8',
       maxLogSize: 10 * 1024 * 1024, // 10 m
       numBackups: 3,
-      daysToKeep: 30,
+      daysToKeep: 30
     },
     error: {
       type: 'dateFile',
@@ -34,13 +34,13 @@ export default {
       encoding: 'utf-8',
       maxLogSize: 10 * 1024 * 1024, // 10 m
       numBackups: 3,
-      daysToKeep: 30,
-    },
+      daysToKeep: 30
+    }
   },
   categories: {
     default: { appenders: ['rule-console'], level: 'info' },
     info: { appenders: ['info'], level: 'info' },
-    error: { appenders: ['error'], level: 'info' },
+    error: { appenders: ['error'], level: 'info' }
   },
   baseLogPath: BASE_LOG_PATH,
   /**
@@ -66,5 +66,5 @@ export default {
    * }
    */
   pm2: true,
-  pm2InstanceVar: 'koa-web_log4js_3100',
+  pm2InstanceVar: 'koa-web_log4js_3100'
 }

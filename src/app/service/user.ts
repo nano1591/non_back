@@ -5,10 +5,7 @@ import { Op } from 'sequelize'
 export const createOneUser = async (newOne: IUser): Promise<User> => {
   const one = await User.findOne({
     where: {
-      [Op.or]: [
-        { username: newOne.username },
-        { account: newOne.account }
-      ]
+      [Op.or]: [{ username: newOne.username }, { account: newOne.account }]
     }
   })
   if (one) {

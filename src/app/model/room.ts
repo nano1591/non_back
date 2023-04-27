@@ -2,8 +2,8 @@ import { DataTypes, FindOptions } from 'sequelize'
 import { User } from './user'
 import { BaseModel, baseOptions } from './base'
 
-export type IRoom = Pick<Room, "masterId" | 'name'>
-export type RoomInfo = Pick<Room, "id" | "masterId" | 'name'>
+export type IRoom = Pick<Room, 'masterId' | 'name'>
+export type RoomInfo = Pick<Room, 'id' | 'masterId' | 'name'>
 
 export class Room extends BaseModel {
   declare masterId: number

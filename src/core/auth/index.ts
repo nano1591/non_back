@@ -2,7 +2,7 @@ import type { Context } from 'koa'
 import jwt from 'jsonwebtoken'
 import CONFIG from '@/config'
 
-export default async (ctx: Context, next: Function) => {
+export default async (ctx: Context, next: () => Promise<void>) => {
   try {
     await next()
   } catch (e: any) {
@@ -14,6 +14,7 @@ export default async (ctx: Context, next: Function) => {
   }
 }
 
-export const generateToken = (id: number) => jwt.sign({ id }, CONFIG.JWT.JWT_SECRET, { expiresIn: CONFIG.JWT.EXPIRES_IN })
+export const generateToken = (id: number) =>
+  jwt.sign({ id }, CONFIG.JWT.JWT_SECRET, { expiresIn: CONFIG.JWT.EXPIRES_IN })
 
 export const verifyToken = (token: string) => jwt.verify(token, CONFIG.JWT.JWT_SECRET)

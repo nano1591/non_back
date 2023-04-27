@@ -15,29 +15,31 @@ import { initSocket } from './app/socket'
 const startKoa = async () => {
   const app = new Koa()
 
-  app.use(compose([
-    // 跨域
-    cors(),
-    // 日志
-    logMiddlewate,
-    // 由error生成返回值
-    processMiddleware,
-    jwtMiddlewate,
-    // token解析
-    jwt({ secret: CONFIG.JWT.JWT_SECRET }).unless({ path: [/^\/user\/(login|register)/] }),
-    // 静态文件
-    require('koa-static')(__dirname + '/public'),
-    // 解析请求体
-    KoaBody({ multipart: true }),
-    // 路由
-    router
-  ]))
+  app.use(
+    compose([
+      // 跨域
+      cors(),
+      // 日志
+      logMiddlewate,
+      // 由error生成返回值
+      processMiddleware,
+      jwtMiddlewate,
+      // token解析
+      jwt({ secret: CONFIG.JWT.JWT_SECRET }).unless({ path: [/^\/user\/(login|register)/] }),
+      // 静态文件
+      require('koa-static')(__dirname + '/public'),
+      // 解析请求体
+      KoaBody({ multipart: true }),
+      // 路由
+      router
+    ])
+  )
 
   global.PROCESS = new Process()
 
   await initDB()
 
-  app.on("error", (error, ctx) => {
+  app.on('error', (error, ctx) => {
     console.log(error, ctx)
   })
 

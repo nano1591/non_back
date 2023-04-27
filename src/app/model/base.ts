@@ -20,6 +20,6 @@ export const baseFields = {
   id: {
     type: DataTypes.INTEGER,
     autoIncrement: true,
-    primaryKey: true,
+    primaryKey: true
   }
 }

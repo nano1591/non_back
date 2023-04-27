@@ -1,6 +1,6 @@
-import { Listener } from "."
-import { getLoginedFriendSocketIdList } from "../service/friend"
-import { getOneUserById } from "../service/user"
+import { Listener } from '.'
+import { getLoginedFriendSocketIdList } from '../service/friend'
+import { getOneUserById } from '../service/user'
 
 export const changeMyIcon: Listener = async (io, socket, { icon }) => {
   const me = await getOneUserById(socket.data.uid!)
@@ -10,5 +10,7 @@ export const changeMyIcon: Listener = async (io, socket, { icon }) => {
   const loginedFriendSocketIdList = await getLoginedFriendSocketIdList(me)
   if (!loginedFriendSocketIdList.length) return
   const sockets = await io.in(loginedFriendSocketIdList).fetchSockets()
-  sockets.forEach(_socket => _socket.emit("friend:notify", { id: me.id, username: me.username, status: me.status, icon }))
+  sockets.forEach((_socket) =>
+    _socket.emit('friend:notify', { id: me.id, username: me.username, status: me.status, icon })
+  )
 }

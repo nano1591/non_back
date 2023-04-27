@@ -1,15 +1,17 @@
 {
-  "name": "ng-back",
+  "name": "nano_of_nichijou",
   "private": true,
   "version": "1.0.0",
-  "description": "nano-game backend",
+  "description": "NanoOfNichijou backend",
   "engines": {
     "node": ">=14.18.0 || >=16.0.0"
   },
   "scripts": {
     "dev": "nodemon",
     "build": "tsc && tsc-alias",
-    "serve": "node dist/app.js"
+    "serve": "node dist/app.js",
+    "format": "prettier --write .",
+    "lint": "eslint . --ext .js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix"
   },
   "dependencies": {
     "@koa/cors": "^4.0.0",
@@ -34,6 +36,12 @@
     "@types/koa-router": "^7.4.4",
     "@types/node": "^18.15.11",
     "@typescript-eslint/eslint-plugin": "^5.59.0",
+    "@typescript-eslint/parser": "^5.57.0",
+    "eslint": "^8.36.0",
+    "eslint-config-prettier": "^8.8.0",
+    "eslint-plugin-prettier": "^4.2.1",
+    "eslint-plugin-react": "^7.32.2",
+    "prettier": "^2.8.7",
     "nodemon": "^2.0.22",
     "tsc-alias": "^1.8.5",
     "tsx": "^3.12.6",

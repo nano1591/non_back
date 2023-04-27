@@ -9,7 +9,7 @@ const UNDEDINED_ERROR = 'undefined errorCode'
 /**
  * 处理结果处理中间件
  */
-export default async (ctx: Context, next: Function) => {
+export default async (ctx: Context, next: () => Promise<void>) => {
   try {
     await next()
   } catch (error: any) {
@@ -32,7 +32,7 @@ export default async (ctx: Context, next: Function) => {
       ctx.status = 500
       ctx.body = {
         code: 10000,
-        message: CODE.get(10000),
+        message: CODE.get(10000)
       }
       Logger.error('SERVER_ERROR', error)
     }

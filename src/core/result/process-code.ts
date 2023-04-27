@@ -21,7 +21,7 @@ const CODE = new Map([
 
   [20000, 'User Module Generic Error.'],
   [20001, 'The user does not exist or password is incorrect.'],
-  [20002, 'No suitable login method found.'],
+  [20002, 'No suitable login method found.']
 ])
 
 export default CODE

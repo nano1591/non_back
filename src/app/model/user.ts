@@ -3,7 +3,7 @@ import { BaseModel, baseFields, baseOptions } from './base'
 import { FriendShip, IRoom, Room } from '.'
 import { IRoomItem, RoomItem } from './room-item'
 
-export type UserStatus = "online" | "outline" | "room" | "gaming"
+export type UserStatus = 'online' | 'outline' | 'room' | 'gaming'
 
 export class User extends BaseModel {
   declare account: string
@@ -33,7 +33,7 @@ export class User extends BaseModel {
   declare RoomItem: RoomItem | null
 }
 
-export type IUser = Pick<User, "account" | "username" | "password">
+export type IUser = Pick<User, 'account' | 'username' | 'password'>
 export type UserInfo = Pick<User, 'id' | 'username' | 'status' | 'icon'>
 
 User.init(
@@ -53,7 +53,7 @@ User.init(
     socketId: DataTypes.TEXT,
     status: {
       type: DataTypes.TEXT,
-      defaultValue: "outline",
+      defaultValue: 'outline',
       allowNull: false
     },
     icon: {
@@ -63,6 +63,6 @@ User.init(
   },
   {
     tableName: 'users',
-    ...baseOptions,
+    ...baseOptions
   }
 )

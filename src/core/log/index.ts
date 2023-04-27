@@ -32,12 +32,18 @@ const formatText = {
     let logText = ''
     try {
       const user = await curUser(ctx)
-      logText += `[USER]\n${JSON.stringify({
-        id: user.id,
-        account: user.account,
-        username: user.username
-      }, null, 2)}`
-    } catch(e) {}
+      logText += `[USER]\n${JSON.stringify(
+        {
+          id: user.id,
+          account: user.account,
+          username: user.username
+        },
+        null,
+        2
+      )}`
+    } catch (e) {
+      /* empty */
+    }
     logText += `\n[RESPONSE BODY]\n${JSON.stringify(ctx.response.body, null, 2)}`
     logText += `\n==================== RESPONSE END ====================\n`
     if (ENV === 'development') console.log(logText)
@@ -67,15 +73,14 @@ const formatText = {
     }
     logText += `\n!!!!!!!!!!!!!!!!!!!! ERROR LOG END !!!!!!!!!!!!!!!!!!!!\n`
     return logText
-  },
+  }
 }
 
 interface LoggerOptions {
-  request: Function
-  response: Function
+  request: (ctx: any) => void
+  response: (ctx: any) => void
   query: (sql: string, timing?: number) => void
-  error: Function
-  [x: string]: any
+  error: (...args: any[]) => void
 }
 
 const Logger: LoggerOptions = {
@@ -95,8 +100,8 @@ const Logger: LoggerOptions = {
   },
 
   /** sql error log */
-  error: function (...arg: any) {
+  error: function (...arg: any[]) {
     errorLogger.error(formatText.error(...arg))
-  },
+  }
 }
 export default Logger
