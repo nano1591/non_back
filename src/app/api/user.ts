@@ -1,7 +1,7 @@
 import type { Context } from 'koa'
 import Joi from 'joi'
 import Router from 'koa-router'
-import { createOneUser, getOneUserById, getOneUserByAccount } from '../service/user'
+import { createOneUser, getOneUserById, getOneUserByAccount, searchUsers } from '../service/user'
 import { IUser } from '../model'
 import { generateToken } from '@/core/auth'
 import { dissolveRoom } from '../service/room'
@@ -38,7 +38,14 @@ router.post('/login', async (ctx: Context) => {
   const user = await getOneUserByAccount(value.account)
   if (user.password !== value.password) global.PROCESS.notFoundException(10410)
   if (user.socketId) global.PROCESS.forbiddenException(10411)
-  global.PROCESS.success({ token: generateToken(user.id) })
+  global.PROCESS.success({
+    id: user.id,
+    username: user.username,
+    account: user.account,
+    icon: user.icon,
+    status: user.status,
+    token: generateToken(user.id)
+  })
 })
 
 router.get('/logout', async (ctx: Context) => {
@@ -48,6 +55,21 @@ router.get('/logout', async (ctx: Context) => {
   await user.save()
   await dissolveRoom(user.id)
   global.PROCESS.success()
+})
+
+const usernameSchame = Joi.object({
+  keyword: Joi.string()
+    .required()
+    .max(16)
+    .pattern(/^[一-龠ぁ-んァ-ヴー\u4E00-\u9FA5A-Za-z0-9]+$/)
+})
+
+/** 搜索好友 */
+router.post('/search', async (ctx: Context) => {
+  const { error, value } = usernameSchame.validate(ctx.request.body)
+  if (error) return global.PROCESS.parameterException(error.message)
+  const resultList = await searchUsers(value.keyword)
+  global.PROCESS.success({ resultList })
 })
 
 export default router

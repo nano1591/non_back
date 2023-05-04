@@ -67,7 +67,7 @@ export const sureSkip = async (curUserId: number, friId: number): Promise<unknow
 
 type SkipItem = Pick<User, 'username'> & Pick<FriendShip, 'createdAt' | 'updatedAt'>
 
-/** 用户收到的和发出的好友申请信息 */
+/** 用户收到的好友申请信息 */
 export const getSkipList = async (user: User): Promise<SkipItem[]> => {
   const mapSkipList = (list: User[]): SkipItem[] =>
     list.map((user) => ({
@@ -78,7 +78,7 @@ export const getSkipList = async (user: User): Promise<SkipItem[]> => {
   const compareFn = (a: SkipItem, b: SkipItem): number =>
     new Date(a.updatedAt) < new Date(b.updatedAt) ? 1 : -1
   return mapSkipList(
-    (await user.getSkipToMe()).filter((user) => user.FriendShip!.status === 'sure')
+    (await user.getSkipToMe()).filter((user) => user.FriendShip!.status === 'ask')
   ).sort(compareFn)
 }
 

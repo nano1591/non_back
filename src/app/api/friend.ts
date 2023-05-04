@@ -8,10 +8,10 @@ const router = new Router({
 })
 
 /** 获取好友请求信息 */
-router.get('/skip_info', async (ctx: Context) => {
+router.get('/skip/list', async (ctx: Context) => {
   const user = await curUser(ctx)
-  const skipInfo = await getSkipList(user)
-  global.PROCESS.success({ skipInfo })
+  const skipList = await getSkipList(user)
+  global.PROCESS.success({ skipList })
 })
 
 /** 获取好友列表 */

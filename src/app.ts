@@ -25,7 +25,9 @@ const startKoa = async () => {
       processMiddleware,
       jwtMiddlewate,
       // token解析
-      jwt({ secret: CONFIG.JWT.JWT_SECRET }).unless({ path: [/^\/user\/(login|register)/] }),
+      jwt({ secret: CONFIG.JWT.JWT_SECRET }).unless({
+        path: [/^\/user\/(login|register)/, /^\/config/]
+      }),
       // 静态文件
       require('koa-static')(__dirname + '/public'),
       // 解析请求体

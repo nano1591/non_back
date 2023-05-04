@@ -6,6 +6,8 @@ const router = new Router({
 })
 
 /** 获取好友请求信息 */
-router.get('/client/version', async () => {
+router.get('/client', async () => {
   global.PROCESS.success({ version: CONFIG.CLIENT.VERSION })
 })
+
+export default router

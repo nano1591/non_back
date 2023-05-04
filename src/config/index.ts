@@ -9,7 +9,7 @@
 const CONFIG = {
   ENV: 'development',
   PORT: 3100,
-  BASE_URL: 'http://10.0.95.220',
+  BASE_URL: 'http://localhost',
   JWT: {
     JWT_SECRET: 'nano',
     EXPIRES_IN: '30d'
@@ -17,17 +17,18 @@ const CONFIG = {
   DATABASE: {
     DIALECT: 'postgres',
     DB_NAME: 'nano-game-db',
-    HOST: '10.0.95.220',
-    PORT: 32768,
+    HOST: 'localhost',
+    PORT: 5432,
     USER: 'postgres',
-    PASSWORD: 'postgrespw',
+    PASSWORD: 'postgres',
     TIMEZONE: '+08:00'
   },
   ROOM: {
     MAX_ITEM_SIZE: 3
   },
   CLIENT: {
-    VERSION: '1.0.0'
+    VERSION: 'V1.0.0',
+    SEARCH_LIMIT: 100
   }
 }
 

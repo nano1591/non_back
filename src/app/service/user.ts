@@ -1,6 +1,7 @@
 import { Context } from 'koa'
 import { User, IUser } from '../model'
 import { Op } from 'sequelize'
+import CONFIG from '../../config'
 
 export const createOneUser = async (newOne: IUser): Promise<User> => {
   const one = await User.findOne({
@@ -62,4 +63,14 @@ export const deleteUserById = async (id: number): Promise<boolean> => {
 
 export const curUser = async (ctx: Context): Promise<User> => {
   return await getOneUserById(ctx.state.user.id)
+}
+
+export const searchUsers = async (kw: string): Promise<string[]> => {
+  const users = await User.findAll({
+    where: {
+      username: { [Op.like]: `%${kw}%` }
+    },
+    limit: CONFIG.CLIENT.SEARCH_LIMIT
+  })
+  return users.map((user) => user.username)
 }
