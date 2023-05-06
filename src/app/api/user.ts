@@ -1,10 +1,9 @@
 import type { Context } from 'koa'
 import Joi from 'joi'
 import Router from 'koa-router'
-import { createOneUser, getOneUserById, getOneUserByAccount, searchUsers } from '../service/user'
+import { createOneUser, getOneUserByAccount, searchUsers } from '../service/user'
 import { IUser } from '../model'
 import { generateToken } from '@/core/auth'
-import { dissolveRoom } from '../service/room'
 
 const router = new Router({
   prefix: '/user'

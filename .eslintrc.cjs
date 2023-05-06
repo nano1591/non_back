@@ -31,6 +31,6 @@ module.exports = {
     '@typescript-eslint/no-var-requires': 'off',
     'no-fallthrough': 'off',
     'max-len': ['error', { code: 300 }],
-    "prettier/prettier": "off"
+    'prettier/prettier': 'off'
   }
 }

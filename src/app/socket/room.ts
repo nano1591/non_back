@@ -2,11 +2,7 @@ import CONFIG from '@/config'
 import { IO, Listener, Socket } from '.'
 import { getOneUserById, getOneUserByUsername } from '../service/user'
 import { Room, RoomInfo, RoomItem, User } from '../model'
-import {
-  createAndJoinRoom,
-  getRoomUsersByMasterId,
-  getRoomUsersByPK,
-} from '../service/room'
+import { createAndJoinRoom, getRoomUsersByMasterId, getRoomUsersByPK } from '../service/room'
 import {
   changeMyStatusAndnotifyLoginedFriend,
   changeUserStatusAndNotifyLoginedFriend
@@ -63,7 +59,7 @@ export const askGameRoom: Listener = async (io, socket, data) => {
   io.in(user.socketId).emit('me:room:ask', { info, fName: me.username })
 }
 
-export const quitOrDissolveOldRoom = async (io: IO, socket: Socket, status = "online") => {
+export const quitOrDissolveOldRoom = async (io: IO, socket: Socket, status = 'online') => {
   const me = await User.findByPk(socket.data.uid!, { include: [RoomItem, Room] })
   if (!me) throw Error()
   const room = me.Room
