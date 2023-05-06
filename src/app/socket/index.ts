@@ -58,7 +58,7 @@ export type ServerToClientEvents = {
   /** 某人被踢出房间 */
   'room:kickout': (data: { info: RoomInfo; fName: string }) => void
   /** 某人加入了房间 */
-  'room:join': (data: { info: RoomInfo; user: UserInRoom }) => void
+  'room:join': (data: { info: RoomInfo; fName: string }) => void
   /** 房间的新况 */
   'room:list': (data: { info: RoomInfo; list: UserInRoom[] }) => void
 }
@@ -96,7 +96,7 @@ export interface ClientToServerEvents {
   /** 解散自己的房间 */
   'room:dissolve': (data: { rid: number }) => void
   /** 更换队伍 */
-  'room:item': (rid: number, itemId: ItemId) => void
+  'room:item': (data: { rid: number; itemId: ItemId }) => void
 }
 
 export interface SocketData {
@@ -123,6 +123,9 @@ export const initSocket = (httpServer: HttpServer) => {
     connectionStateRecovery: {
       maxDisconnectionDuration: 2 * 60 * 1000,
       skipMiddlewares: true
+    },
+    cors: {
+      origin: '*'
     }
   })
 

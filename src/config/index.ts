@@ -18,9 +18,9 @@ const CONFIG = {
     DIALECT: 'postgres',
     DB_NAME: 'nano-game-db',
     HOST: 'localhost',
-    PORT: 5432,
+    PORT: 32768, // 32768 5432
     USER: 'postgres',
-    PASSWORD: 'postgres',
+    PASSWORD: 'postgrespw', // postgrespw postgres
     TIMEZONE: '+08:00'
   },
   ROOM: {

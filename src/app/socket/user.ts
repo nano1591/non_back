@@ -1,9 +1,11 @@
 import { Listener } from '.'
+import { Room, User } from '../model'
 import { getLoginedFriendSocketIdList } from '../service/friend'
-import { getOneUserById } from '../service/user'
+import { getRoomUsersByPK } from '../service/room'
 
 export const changeMyIcon: Listener = async (io, socket, { icon }) => {
-  const me = await getOneUserById(socket.data.uid!)
+  const me = await User.findByPk(socket.data.uid!, { include: [Room] })
+  if (!me) return
   if (!Number.isFinite(icon)) return
   me.icon = icon
   await me.save()
@@ -13,4 +15,11 @@ export const changeMyIcon: Listener = async (io, socket, { icon }) => {
   sockets.forEach((_socket) =>
     _socket.emit('friend:notify', { id: me.id, username: me.username, status: me.status, icon })
   )
+  const room = me.Room
+  if (!room) return
+  const list = await getRoomUsersByPK(room.id)
+  io.in(room.name).emit('room:list', {
+    info: { id: room.id, masterId: room.masterId, name: room.name },
+    list
+  })
 }

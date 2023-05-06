@@ -23,8 +23,7 @@ Room.init(
     },
     name: {
       type: DataTypes.TEXT,
-      allowNull: false,
-      unique: true
+      allowNull: false
     }
   },
   {

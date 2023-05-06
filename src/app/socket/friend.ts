@@ -6,17 +6,32 @@ import {
   sureSkip
 } from '../service/friend'
 import { getOneUserById, getOneUserByUsername } from '../service/user'
-import type { Listener } from '.'
+import type { IO, Listener } from '.'
+import { quitOrDissolveOldRoom } from './room'
+import { User } from '../model'
 
 export const changeMyStatusAndnotifyLoginedFriend: Listener = async (io, socket, { status }) => {
   const me = await getOneUserById(socket.data.uid!)
-  me.status = status
-  await me.save()
-  const loginedFriendSocketIdList = await getLoginedFriendSocketIdList(me)
+  me.socketId = socket.id
+  if (status === 'outline') {
+    me.socketId = null
+    return quitOrDissolveOldRoom(io, socket, 'outline')
+  }
+  changeUserStatusAndNotifyLoginedFriend(io, me, { status })
+}
+
+export const changeUserStatusAndNotifyLoginedFriend = async (
+  io: IO,
+  user: User,
+  { status }: any
+) => {
+  user.status = status
+  await user.save()
+  const loginedFriendSocketIdList = await getLoginedFriendSocketIdList(user)
   if (!loginedFriendSocketIdList.length) return
   const sockets = await io.in(loginedFriendSocketIdList).fetchSockets()
   sockets.forEach((_socket) =>
-    _socket.emit('friend:notify', { id: me.id, username: me.username, status, icon: me.icon })
+    _socket.emit('friend:notify', { id: user.id, username: user.username, status, icon: user.icon })
   )
 }
 
@@ -44,6 +59,12 @@ export const agreeFriendShip: Listener = async (io, socket, data) => {
       icon: me.icon
     })
   }
+  socket.emit('friend:notify', {
+    id: friend.id,
+    username: friend.username,
+    status: friend.status,
+    icon: friend.icon
+  })
 }
 
 /** friend:reject */

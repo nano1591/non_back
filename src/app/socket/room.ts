@@ -6,9 +6,11 @@ import {
   createAndJoinRoom,
   getRoomUsersByMasterId,
   getRoomUsersByPK,
-  leaveRoom
 } from '../service/room'
-import { changeMyStatusAndnotifyLoginedFriend } from './friend'
+import {
+  changeMyStatusAndnotifyLoginedFriend,
+  changeUserStatusAndNotifyLoginedFriend
+} from './friend'
 
 /** 加入房间失败 */
 const notifyJoinFailed = (io: IO, socket: Socket, roomInfo: RoomInfo, fName: string) => {
@@ -61,19 +63,27 @@ export const askGameRoom: Listener = async (io, socket, data) => {
   io.in(user.socketId).emit('me:room:ask', { info, fName: me.username })
 }
 
-const quitOldRoom = async (io: IO, socket: Socket) => {
-  const oldRoom = await leaveRoom(socket.data.uid!)
-  if (oldRoom) {
-    io.in(socket.id).socketsLeave(oldRoom.name)
-    const list = await getRoomUsersByMasterId(oldRoom.masterId)
-    const info = { id: oldRoom.id, masterId: oldRoom.masterId, name: oldRoom.name }
-    io.in(oldRoom.name).emit('room:list', { info, list })
+export const quitOrDissolveOldRoom = async (io: IO, socket: Socket, status = "online") => {
+  const me = await User.findByPk(socket.data.uid!, { include: [RoomItem, Room] })
+  if (!me) throw Error()
+  const room = me.Room
+  if (!room) return
+  const info = { id: room.id, masterId: room.masterId, name: room.name }
+  if (room?.masterId === me.id) {
+    await dissolveGameRoom(io, socket, { rid: room.id, status })
+  } else {
+    io.in(socket.id).socketsLeave(room.name)
+    const list = await getRoomUsersByMasterId(room.masterId)
+    io.in(room.name).emit('room:list', { info, list })
     socket.emit('me:room:quit', { info })
+    room.removeUser(me)
+    me.RoomItem?.destroy()
+    changeUserStatusAndNotifyLoginedFriend(io, me, { status })
   }
 }
 
 export const quitGameRoom: Listener = async (io, socket) => {
-  await quitOldRoom(io, socket)
+  await quitOrDissolveOldRoom(io, socket)
 }
 
 const joinRoom = async (io: IO, socket: Socket, room: Room, me: User) => {
@@ -90,6 +100,10 @@ const joinRoom = async (io: IO, socket: Socket, room: Room, me: User) => {
 
   io.in(socket.id).socketsJoin(room.name)
   const list = await getRoomUsersByPK(room.id)
+  io.in(room.name).emit('room:join', {
+    info: { id: room.id, masterId: room.masterId, name: room.name },
+    fName: me.username
+  })
   io.in(room.name).emit('room:list', {
     info: { id: room.id, masterId: room.masterId, name: room.name },
     list
@@ -109,7 +123,7 @@ const joinRoom = async (io: IO, socket: Socket, room: Room, me: User) => {
  * 7.通知在线好友自己的房间状态
  */
 export const agreeGameRoom: Listener = async (io, socket, data) => {
-  await quitOldRoom(io, socket)
+  await quitOrDissolveOldRoom(io, socket)
   const me = await getOneUserById(socket.data.uid!)
   const room = await Room.findByPk(data.rid)
   if (!room) return
@@ -128,7 +142,7 @@ export const agreeGameRoom: Listener = async (io, socket, data) => {
  * 7.通知在线好友自己的房间状态
  */
 export const joinGameRoom: Listener = async (io, socket, data) => {
-  await quitOldRoom(io, socket)
+  await quitOrDissolveOldRoom(io, socket)
   const me = await getOneUserById(socket.data.uid!)
   const friend = await User.findOne({ where: { username: data.fName }, include: Room })
   const room = friend?.Room
@@ -168,7 +182,7 @@ export const kickoutGameRoom: Listener = async (io, socket, data) => {
   io.in(room.name).emit('room:kickout', { info, fName: data.fName })
   io.in(room.name).emit('room:list', { info, list })
   io.in(user.socketId).emit('me:room:kickout', { info })
-  await changeMyStatusAndnotifyLoginedFriend(io, socket, { status: 'online' })
+  await changeUserStatusAndNotifyLoginedFriend(io, user, { status: 'online' })
 }
 
 /**
@@ -182,7 +196,7 @@ export const changeItem: Listener = async (io, socket, data) => {
   const room = me.Room
   const users = await getRoomUsersByPK(room.id)
   const item = users.filter((room) => room.itemId === data.itemId)
-  if (item.length >= CONFIG.ROOM.MAX_ITEM_SIZE - 1) return
+  if (item.length >= CONFIG.ROOM.MAX_ITEM_SIZE) return
 
   await me.RoomItem.destroy()
   await me.createRoomItem({ itemId: data.itemId })
@@ -205,7 +219,10 @@ export const dissolveGameRoom: Listener = async (io, socket, data) => {
   const info = { id: room.id, masterId: room.masterId, name: room.name }
   io.in(room.name).emit('me:room:dissolve', { info })
   const roomUsers = await room.getUsers({ include: RoomItem })
-  roomUsers.forEach(async (user) => await user.RoomItem?.destroy())
+  roomUsers.forEach(async (user) => {
+    changeUserStatusAndNotifyLoginedFriend(io, user, { status: data.status ?? 'online' })
+    await user.RoomItem?.destroy()
+  })
   await room.destroy()
 }
 

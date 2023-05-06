@@ -29,6 +29,8 @@ module.exports = {
     '@typescript-eslint/no-explicit-any': 'off',
     '@typescript-eslint/no-non-null-assertion': 'off',
     '@typescript-eslint/no-var-requires': 'off',
-    'no-fallthrough': 'off'
+    'no-fallthrough': 'off',
+    'max-len': ['error', { code: 300 }],
+    "prettier/prettier": "off"
   }
 }

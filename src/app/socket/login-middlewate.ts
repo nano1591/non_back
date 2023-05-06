@@ -13,6 +13,7 @@ export default async (socket: Socket, next: () => Promise<void>) => {
     await saveUserSocketId(uid, socket.id)
     next()
   } catch (e: any) {
+    console.log('socket middlewate', e)
     next(e)
   }
 }

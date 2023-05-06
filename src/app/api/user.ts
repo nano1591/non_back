@@ -48,15 +48,6 @@ router.post('/login', async (ctx: Context) => {
   })
 })
 
-router.get('/logout', async (ctx: Context) => {
-  const user = await getOneUserById(ctx.state.user.id)
-  if (!user.socketId) global.PROCESS.forbiddenException(10412)
-  user.socketId = ''
-  await user.save()
-  await dissolveRoom(user.id)
-  global.PROCESS.success()
-})
-
 const usernameSchame = Joi.object({
   keyword: Joi.string()
     .required()
